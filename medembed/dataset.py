@@ -128,7 +128,6 @@ class TxtDataset(DataSet):
             if self.verbose and file_count % 500:
                 print('Processed {} files'.format(file_count))
 
-
     def _make_categories(self):
         """
         Makes a list of categories to extract from a raw document
