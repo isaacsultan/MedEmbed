@@ -1,10 +1,16 @@
 import argparse
+import os
 
-from dataset import DataSet
+from dataset import TxtDataset, XMLDataset
 from embedding import Embedding
 
+DIR_PROCESSED = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'processed')
 
 def get_arguments():
+    """
+    Defines and reads command line arguments
+    :return: Command line arguments
+    """
     parser = argparse.ArgumentParser(description='Generate word embedding vectors')
     parser.add_argument('-v', '--verbose', help='verbose mode', action='count', default=0)
     parser.add_argument('dir', type=str,
@@ -22,13 +28,19 @@ def get_arguments():
 
 
 def main():
+    """
+    dataset -> transformed dataset -> word embedding vector
+    :return: None
+    """
 
     args = get_arguments()
-    # authentification = Authentication(args.apikey)
-    dataset = DataSet(args)
+    if args.filetype == 'txt':
+        dataset = TxtDataset(args.dir, args.verbose)
+    else:
+        dataset = XMLDataset(args.dir, args.verbose)
     dataset.preprocess()
-    #embedding = Embedding(args)
-    #embedding.generate(dataset)
+    embedding = Embedding(args.verbose)
+    embedding.generate(dataset, args.model, args.dim, args.workers)
 
 
 if '__name__ == __main__':
