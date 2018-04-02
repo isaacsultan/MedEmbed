@@ -2,10 +2,10 @@ Source Code Documentation
 ============================
 
 .. automodule:: dataset
-:members:
+   :members:
 
 .. automodule:: embedding
-:members:
+   :members:
 
 .. automodule:: transformer
-:members:
+   :members:
