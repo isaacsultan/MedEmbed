@@ -34,6 +34,10 @@ and the prevelence of specialist vocabulary.
                 [--workers WORKERS] # train WE model over n cores
                 dir # directory of input files
 
+### Documentation
+
+[Read the Docs](http://medembed.readthedocs.io)
+
 Examples within popular deep learning frameworks of WE use for text classification.
 
 1. TensorFlow:  [tensorflow_fasttext](https://github.com/apcode/tensorflow_fasttext)
