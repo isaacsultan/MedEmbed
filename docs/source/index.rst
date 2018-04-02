@@ -7,9 +7,9 @@ Welcome to MedEmbed's documentation!
 ====================================
 
 .. toctree::
-:maxdepth: 2
+   :maxdepth: 2
 
-       code
+   code
 
 
 
