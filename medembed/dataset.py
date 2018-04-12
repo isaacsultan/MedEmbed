@@ -13,18 +13,20 @@ import gensim
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
 
-DIR_PROCESSED = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'processed')
-
+DIR_PROCESSED = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'processed')
 
 class DataSet:
     """
     Holds the dataset and the methods associated with it
     """
 
-    def __init__(self, dir, verbose):
+    def __init__(self, dir, verbose, categories):
         self.dir = dir
         self.verbose = verbose
         self.dictionary = None
+        self.categories = categories
+        self.type = None
+
 
     def preprocess(self):
         """
@@ -35,8 +37,13 @@ class DataSet:
         if self.verbose:
             print('Processing files in directory {}'.format(self.dir))
 
-        categories = self._make_categories()  # TODO:refactor
-        transformer = Transformer(categories, self.args.apikey)
+        categories = self._make_categories(self.categories)
+        transformer = Transformer(categories)
+
+        if not os.path.exists(DIR_PROCESSED):
+            print('Creating a directory for processed files at {}'.format(DIR_PROCESSED))
+            os.makedirs(DIR_PROCESSED)
+
         self._read_extract(transformer)
 
         if self.verbose:
@@ -49,7 +56,7 @@ class DataSet:
 
         if self.verbose:
             print('Performing UMLS and CLEVER mapping')
-        transformer.transform()
+
 
     @staticmethod
     def iter_documents():
@@ -70,8 +77,24 @@ class DataSet:
         for tokens in DataSet.iter_documents():
             yield self.dictionary.doc2bow(tokens)
 
+    @staticmethod
+    def _make_categories(categories):
+        """
+        Makes a list of categories to extract from a raw document
+        :return: category list, or None (if extracting all categories)
+        """
+
+        if categories is None:
+            return []
+        else:
+            with open(categories, 'r') as f:
+                return f.readlines()
+
 
 class XMLDataset(DataSet):
+    def __init__(self, dir, verbose, categories):
+        super().__init__(dir, verbose, categories)
+        self.type = 'XML'
 
     def _read_extract(self, transformer):
         """
@@ -87,20 +110,24 @@ class XMLDataset(DataSet):
         if self.verbose:
             print('{} files found'.format(len(directory_files)))
 
-        file_count = 0
-
+        file_count =0
         for fname in filter(lambda fname: fname.endswith('.xml'), directory_files):
-            with open(os.path.join(self.dir, fname), 'r') as f:
-                clean_sample = transformer.make_clean_sample(f, stops, stemmer)
-            new_fname = os.path.join(DIR_PROCESSED, fname)
-            print(clean_sample, file=new_fname)
+            tree = ET.parse(os.path.join(self.dir, fname))
+            f = tree.getroot()[0].text
+            clean_sample = transformer.make_clean_sample(f, stops, stemmer, xml=True)
+            new_fname = fname.split('.xml')[0] + '.txt'
+            new_fname = os.path.join(DIR_PROCESSED, new_fname)
+            print(clean_sample, file=open(new_fname, 'w'))
             file_count += 1
 
-            if self.verbose and file_count % 500:
+            if self.verbose and file_count % 50 == 0:
                 print('Processed {} files'.format(file_count))
 
 
 class TxtDataset(DataSet):
+    def __init__(self, dir, verbose, categories):
+        super().__init__(dir, verbose, categories)
+        self.type = 'Txt'
 
     def _read_extract(self, transformer):
         """
@@ -118,22 +145,12 @@ class TxtDataset(DataSet):
 
         file_count = 0
 
-        for fname in filter(lambda fname: fname.endswith('.xml'), directory_files):
+        for fname in filter(lambda fname: fname.endswith('.txt'), directory_files):
             with open(os.path.join(self.dir, fname), 'r') as f:
                 clean_sample = transformer.make_clean_sample(f, stops, stemmer)
             new_fname = os.path.join(DIR_PROCESSED, fname)
-            print(clean_sample, file=new_fname)
+            print(clean_sample, file = open(new_fname, 'w'))
             file_count += 1
 
-            if self.verbose and file_count % 500:
+            if self.verbose and file_count % 50 == 0:
                 print('Processed {} files'.format(file_count))
-
-    def _make_categories(self):
-        """
-        Makes a list of categories to extract from a raw document
-        :return: category list, or None (if extracting all categories)
-        """
-
-        if self.args.categories is not None:
-            with open(self.args.categories, 'r') as f:
-                return f.readlines()

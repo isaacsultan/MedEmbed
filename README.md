@@ -12,6 +12,7 @@ and the prevelence of specialist vocabulary.
 
 ## Installation
 
+    git clone https://github.com/isaacsultan/medembed
     pip install -r requirements.txt
 
 
@@ -19,10 +20,11 @@ and the prevelence of specialist vocabulary.
 
 * python 3
 * pip
+* git
 
 ## Usage
 
-    usage: main.py
+    usage: medembed/main.py
                 [-h] # help
                 [-v] # verbosity
                 [--filetype {txt,xml}] # type of input file
@@ -43,11 +45,6 @@ Examples within popular deep learning frameworks of WE use for text classificati
 1. TensorFlow:  [tensorflow_fasttext](https://github.com/apcode/tensorflow_fasttext)
 2. Pytorch: [DeepLearningForNLPInPytorch](https://github.com/rguthrie3/DeepLearningForNLPInPytorch)
 3. Keras: [keras_gensim_embeddings](https://gist.github.com/codekansas/15b3c2a2e9bc7a3c345138a32e029969)
-
-
-## How to contribute!
-
-
 
 ## Authors
 

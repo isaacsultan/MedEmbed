@@ -9,9 +9,9 @@ uri = "https://utslogin.nlm.nih.gov"
 # option 2 - api key authentication at /cas/v1/api-key
 auth_endpoint = "/cas/v1/api-key"
 
-'''
-
-'''
+""""
+For future work
+"""
 class Authentication:
     '''
     The UMLS REST API requires a UMLS account for the authentication

@@ -1,9 +1,10 @@
 import fileinput
 import os
+from itertools import chain
 
 from nltk.tokenize import word_tokenize
 
-DIR_PROCESSED = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'processed')
+DIR_PROCESSED = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'processed')
 
 
 class Transformer:
@@ -11,13 +12,14 @@ class Transformer:
     Methods that process the dataset before generating word embedding model
     """
 
-    def __init__(self, categories, apikey):
+    def __init__(self, categories, apikey=None):
 
-        self.category = set(categories)
+        self.category = None
         self.category_tokens = set([' '.split(i) for i in categories])
         self.word_freqs = dict()
+        self.apikey = apikey
 
-    def make_clean_sample(self, f, stops, stemmer):
+    def make_clean_sample(self, f, stops, stemmer, xml=True):
         """
         raw text -> clean text and generates word_frequency dictionary
         :param f: raw text
@@ -25,10 +27,25 @@ class Transformer:
         :param stemmer: nltk stemmer
         :return: processed text
         """
-        clean_sample = []
+        clean_sample = ''
+
+
+        if xml:
+            tokens = word_tokenize(f)
+            for token in tokens:
+                if token not in stops and token.isalpha():
+                    if token not in self.word_freqs:
+                        self.word_freqs[token] = 0
+                    else:
+                        self.word_freqs[token] += 1
+                    token = stemmer.stem(token)
+                    token = token.lower()
+                    clean_sample += token + ' '
+            return clean_sample
 
         for line in f:
             if self.category is None:
+                clean_line = ''
                 tokens = word_tokenize(line)
                 for token in tokens:
                     if token not in stops and token.isalpha():
@@ -38,10 +55,12 @@ class Transformer:
                             self.word_freqs[token] += 1
                         token = stemmer.stem(token)
                         token = token.lower()
-                        clean_sample.append(token)
+                        clean_line += token + ' '
+                clean_sample += clean_line
 
             else:
                 if any(s in line for s in self.category):
+                    clean_line = ''
                     tokens = word_tokenize(line)
                     for token in tokens:
                         if token not in stops and token not in self.category_tokens and token.isalpha():
@@ -52,15 +71,15 @@ class Transformer:
 
                         token = stemmer.stem(token)
                         token = token.lower()
-                        clean_sample.append(token)
-            clean_sample.append('\n')
+                        clean_sample += token + ' '
+            clean_sample += clean_line
         return clean_sample
 
     def transform(self):
         self._encode_negation()
         clever_map = self._make_clever_map()
-        umls_map = self._make_umls_map()
-        self._do_mapping(clever_map, umls_map)
+        #umls_map = self._make_umls_map()
+        self._do_mapping(clever_map)
 
     @staticmethod
     def _encode_negation():
@@ -70,7 +89,10 @@ class Transformer:
     def _make_clever_map():
         clever_map = dict()
         directory_path = os.path.dirname(os.path.realpath(__file__))
-        fname = os.path.join(directory_path, '/clever_term', 'clever_base_terminology.txt')
+        print(directory_path)
+        #fname = os.path.join(directory_path, '/clever_term', 'clever_base_terminology.txt')
+        fname = '/Users/isaacsultan/Code/MedEmbed/clever_term/clever_base_terminology.txt'
+        print(fname)
         with open(fname, 'r') as f:
             for line in f:
                 tokens = line.split('|')
@@ -81,10 +103,7 @@ class Transformer:
 
         return None
 
-    def _do_mapping(self, clever_map, umls_map):
-
-        clever_map = self._make_clever_map()
-        umls_map = self._make_umls_map()
+    def _do_mapping(self, clever_map, umls_map=None):
 
         for line in fileinput.input(files=os.listdir(DIR_PROCESSED), inplace=True):
             tokens = word_tokenize(line)
