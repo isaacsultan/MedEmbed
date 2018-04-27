@@ -1,7 +1,7 @@
 Source Code Documentation
 ============================
 .. automodule:: main
-:members:
+   :members:
 
 .. automodule:: dataset
    :members:
