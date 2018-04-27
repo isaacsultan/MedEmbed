@@ -1,19 +1,19 @@
-.. automodule:: main
+.. automodule:: medembed.main
    :members:
    :private-members:
    :special-members:
 
-.. automodule:: dataset
+.. automodule:: medembed.dataset
    :members:
    :private-members:
    :special-members:
 
-.. automodule:: embedding
+.. automodule:: medembed.embedding
    :members:
    :private-members:
    :special-members:
 
-.. automodule:: transformer
+.. automodule:: medembed.transformer
    :members:
    :private-members:
    :special-members:

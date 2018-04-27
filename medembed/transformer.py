@@ -3,7 +3,7 @@ import os
 
 from nltk.tokenize import word_tokenize
 
-from medembed import DIR_PROCESSED
+from . import DIR_PROCESSED
 
 
 class Transformer:
