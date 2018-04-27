@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.manifold import TSNE
 
-from medembed import DIR_PROCESSED
+from . import DIR_PROCESSED
 
 
 class Embedding:

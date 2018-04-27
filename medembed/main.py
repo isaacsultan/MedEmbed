@@ -1,8 +1,8 @@
 import argparse
 import os
 
-from dataset import TxtDataset, XMLDataset
-from embedding import Embedding
+from .dataset import TxtDataset, XMLDataset
+from .embedding import Embedding
 
 
 def get_arguments():
@@ -50,6 +50,3 @@ def main():
     if args.visualise:
         embedding.tSNE(model_file='/Users/isaacsultan/Code/MedEmbed/we_models/word2vec_04-27_05:00.bin')
 
-
-if '__name__ == __main__':
-    main()

@@ -1,12 +1,12 @@
-.. automodule:: main
+.. automodule:: medembed.main
    :members:
 
-.. automodule:: dataset
+.. automodule:: medembed.dataset
    :members:
 
-.. automodule:: embedding
+.. automodule:: medembed.embedding
    :members:
 
-.. automodule:: transformer
+.. automodule:: medembed.transformer
    :members:
 
