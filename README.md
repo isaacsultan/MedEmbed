@@ -34,6 +34,7 @@ and the prevelence of specialist vocabulary.
                 [--categories CATEGORIES] # text file with headers of categories to parse
                 [--model {glove,fasttext}] # WE model to generate
                 [--workers WORKERS] # train WE model over n cores
+                ['--visualise] # make tSNE plot of trained word embedding model
                 dir # directory of input files
 
 ### Documentation
