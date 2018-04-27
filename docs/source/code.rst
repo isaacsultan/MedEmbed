@@ -1,5 +1,4 @@
-Source Code Documentation
-============================
+
 .. automodule:: main
    :members:
 
@@ -11,3 +10,4 @@ Source Code Documentation
 
 .. automodule:: transformer
    :members:
+

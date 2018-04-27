@@ -4,7 +4,7 @@
 #
 # This file does only contain a selection of the most common options. For a
 # full list see the documentation:
-# http://www.sphinx-doc.org/en/stable/config
+# http://www.sphinx-doc.org/en/master/config
 
 # -- Path setup --------------------------------------------------------------
 
@@ -14,9 +14,9 @@
 #
 import os
 import sys
-
 # sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../../medembed'))
+
 
 # -- Project information -----------------------------------------------------
 
@@ -27,7 +27,8 @@ author = 'Isaac Sultan'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.1'
+release = '0.2'
+
 
 # -- General configuration ---------------------------------------------------
 
@@ -40,6 +41,8 @@ release = '0.1'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.coverage',
+    'sphinx.ext.viewcode',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -68,6 +71,7 @@ exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'sphinx'
+
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -103,6 +107,7 @@ html_static_path = ['_static']
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'MedEmbeddoc'
 
+
 # -- Options for LaTeX output ------------------------------------------------
 
 latex_elements = {
@@ -131,6 +136,7 @@ latex_documents = [
      'Isaac Sultan', 'manual'),
 ]
 
+
 # -- Options for manual page output ------------------------------------------
 
 # One entry per manual page. List of tuples
@@ -139,6 +145,7 @@ man_pages = [
     (master_doc, 'medembed', 'MedEmbed Documentation',
      [author], 1)
 ]
+
 
 # -- Options for Texinfo output ----------------------------------------------
 
@@ -150,5 +157,6 @@ texinfo_documents = [
      author, 'MedEmbed', 'One line description of project.',
      'Miscellaneous'),
 ]
+
 
 # -- Extension configuration -------------------------------------------------
