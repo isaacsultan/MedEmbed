@@ -50,3 +50,4 @@ def main():
     if args.visualise:
         embedding.tSNE(model_file='/Users/isaacsultan/Code/MedEmbed/we_models/word2vec_04-27_05:00.bin')
 
+main()
