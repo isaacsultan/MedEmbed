@@ -1,10 +1,9 @@
 import fileinput
 import os
-from itertools import chain
 
 from nltk.tokenize import word_tokenize
 
-DIR_PROCESSED = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'processed')
+from medembed import DIR_PROCESSED
 
 
 class Transformer:
@@ -19,26 +18,28 @@ class Transformer:
         self.word_freqs = dict()
         self.apikey = apikey
 
-    def make_clean_sample(self, f, stops, stemmer, xml=True):
+    def make_clean_sample(self, f, stops, stemmer, ftype='xml'):
         """
         raw text -> clean text and generates word_frequency dictionary
         :param f: raw text
         :param stops: set of stopwords
         :param stemmer: nltk stemmer
+        :param ftype: type of files to process
         :return: processed text
         """
         clean_sample = ''
 
-
-        if xml:
+        if ftype == 'xml':
             tokens = word_tokenize(f)
             for token in tokens:
-                if token not in stops and token.isalpha():
+                if token in ['?', '!', '.']:
+                    clean_sample += '\n'
+                elif token not in stops and token.isalpha():
                     if token not in self.word_freqs:
                         self.word_freqs[token] = 0
                     else:
                         self.word_freqs[token] += 1
-                    token = stemmer.stem(token)
+                    token = stemmer.lemmatize(token)
                     token = token.lower()
                     clean_sample += token + ' '
             return clean_sample
@@ -53,7 +54,7 @@ class Transformer:
                             self.word_freqs[token] = 0
                         else:
                             self.word_freqs[token] += 1
-                        token = stemmer.stem(token)
+                        token = stemmer.lemmatize(token)
                         token = token.lower()
                         clean_line += token + ' '
                 clean_sample += clean_line
@@ -69,30 +70,21 @@ class Transformer:
                             else:
                                 self.word_freqs[token] += 1
 
-                        token = stemmer.stem(token)
+                        token = stemmer.lemmatize(token)
                         token = token.lower()
-                        clean_sample += token + ' '
-            clean_sample += clean_line
+                        clean_line += token + ' '
+                    clean_sample += clean_line
         return clean_sample
 
     def transform(self):
-        self._encode_negation()
         clever_map = self._make_clever_map()
-        #umls_map = self._make_umls_map()
+        # umls_map = self._make_umls_map()
         self._do_mapping(clever_map)
-
-    @staticmethod
-    def _encode_negation():
-        return None
 
     @staticmethod
     def _make_clever_map():
         clever_map = dict()
-        directory_path = os.path.dirname(os.path.realpath(__file__))
-        print(directory_path)
-        #fname = os.path.join(directory_path, '/clever_term', 'clever_base_terminology.txt')
-        fname = '/Users/isaacsultan/Code/MedEmbed/clever_term/clever_base_terminology.txt'
-        print(fname)
+        fname = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'clever_term', 'clever_base_terminology.txt')
         with open(fname, 'r') as f:
             for line in f:
                 tokens = line.split('|')
@@ -100,15 +92,20 @@ class Transformer:
         return clever_map
 
     def _make_umls_map(self):
-
         return None
 
     def _do_mapping(self, clever_map, umls_map=None):
 
-        for line in fileinput.input(files=os.listdir(DIR_PROCESSED), inplace=True):
-            tokens = word_tokenize(line)
-            newline = ' '.join(str(clever_map.get(token, token)) for token in tokens)
-            print(newline)  # check
+        files = os.listdir(DIR_PROCESSED)
+        for fname in filter(lambda fname: fname.endswith('.txt'), files):
+            full_fname = os.path.join(DIR_PROCESSED, fname)
+            with open(full_fname, 'r') as f:
+                mapped_text = ''
+                for line in f:
+                    tokens = word_tokenize(line)
+                    newline = ' '.join(str(clever_map.get(token, token)) for token in tokens) + '\n'
+                    mapped_text += newline
+                print(mapped_text, file=open(full_fname, 'w'))
 
     @staticmethod
     def _find_frequent(threshold_bigram):

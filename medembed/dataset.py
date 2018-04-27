@@ -11,22 +11,34 @@ except ImportError:
 
 import gensim
 from nltk.corpus import stopwords
-from nltk.stem.snowball import SnowballStemmer
+from nltk.stem.wordnet import WordNetLemmatizer
 
-DIR_PROCESSED = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'processed')
+from medembed import DIR_PROCESSED
+
 
 class DataSet:
     """
     Holds the dataset and the methods associated with it
     """
 
-    def __init__(self, dir, verbose, categories):
-        self.dir = dir
+    def __init__(self, directory, verbose, categories):
+        self.dir = directory
         self.verbose = verbose
         self.dictionary = None
         self.categories = categories
         self.type = None
 
+        self.stemmer = WordNetLemmatizer()
+        self.stops = self._make_stops()
+
+    def _read_extract(self, transformer):
+        raise NotImplementedError
+
+    @staticmethod
+    def _make_stops():
+        stops = set(stopwords.words('english'))
+        stops.difference_update({'no', 'nor', 'not'})
+        return stops
 
     def preprocess(self):
         """
@@ -41,7 +53,8 @@ class DataSet:
         transformer = Transformer(categories)
 
         if not os.path.exists(DIR_PROCESSED):
-            print('Creating a directory for processed files at {}'.format(DIR_PROCESSED))
+            if self.verbose:
+                print('Creating a directory for processed files at {}'.format(DIR_PROCESSED))
             os.makedirs(DIR_PROCESSED)
 
         self._read_extract(transformer)
@@ -57,6 +70,7 @@ class DataSet:
         if self.verbose:
             print('Performing UMLS and CLEVER mapping')
 
+        transformer.transform()
 
     @staticmethod
     def iter_documents():
@@ -68,14 +82,6 @@ class DataSet:
             for fname in filter(lambda fname: fname.endswith('.txt'), files):
                 document = open(os.path.join(root, fname)).read()
                 yield gensim.utils.tokenize(document, errors='ignore')
-
-    def __iter__(self):
-        """
-        __iter__ is a generator => Dataset is a streamed iterable
-        :return: sparse dictionary
-        """
-        for tokens in DataSet.iter_documents():
-            yield self.dictionary.doc2bow(tokens)
 
     @staticmethod
     def _make_categories(categories):
@@ -92,9 +98,9 @@ class DataSet:
 
 
 class XMLDataset(DataSet):
-    def __init__(self, dir, verbose, categories):
-        super().__init__(dir, verbose, categories)
-        self.type = 'XML'
+    def __init__(self, directory, verbose, categories):
+        super().__init__(directory, verbose, categories)
+        self.type = 'xml'
 
     def _read_extract(self, transformer):
         """
@@ -102,19 +108,16 @@ class XMLDataset(DataSet):
         :return: None
         """
 
-        stemmer = SnowballStemmer('english')
-        stops = set(stopwords.words('english'))
-
         directory_files = os.listdir(self.dir)
 
         if self.verbose:
             print('{} files found'.format(len(directory_files)))
 
-        file_count =0
+        file_count = 0
         for fname in filter(lambda fname: fname.endswith('.xml'), directory_files):
             tree = ET.parse(os.path.join(self.dir, fname))
-            f = tree.getroot()[0].text
-            clean_sample = transformer.make_clean_sample(f, stops, stemmer, xml=True)
+            f = ET.tostring(tree.getroot()[0]).decode()
+            clean_sample = transformer.make_clean_sample(f, self.stops, self.stemmer, self.type)
             new_fname = fname.split('.xml')[0] + '.txt'
             new_fname = os.path.join(DIR_PROCESSED, new_fname)
             print(clean_sample, file=open(new_fname, 'w'))
@@ -125,18 +128,15 @@ class XMLDataset(DataSet):
 
 
 class TxtDataset(DataSet):
-    def __init__(self, dir, verbose, categories):
-        super().__init__(dir, verbose, categories)
-        self.type = 'Txt'
+    def __init__(self, directory, verbose, categories):
+        super().__init__(directory, verbose, categories)
+        self.type = 'txt'
 
     def _read_extract(self, transformer):
         """
         Reads txt files in data directory, cleans files and writes each file to preprocessed directory
         :return: None
         """
-
-        stemmer = SnowballStemmer('english')
-        stops = set(stopwords.words('english'))
 
         directory_files = os.listdir(self.dir)
 
@@ -147,9 +147,9 @@ class TxtDataset(DataSet):
 
         for fname in filter(lambda fname: fname.endswith('.txt'), directory_files):
             with open(os.path.join(self.dir, fname), 'r') as f:
-                clean_sample = transformer.make_clean_sample(f, stops, stemmer)
+                clean_sample = transformer.make_clean_sample(f, self.stops, self.stemmer, self.type)
             new_fname = os.path.join(DIR_PROCESSED, fname)
-            print(clean_sample, file = open(new_fname, 'w'))
+            print(clean_sample, file=open(new_fname, 'w'))
             file_count += 1
 
             if self.verbose and file_count % 50 == 0:
