@@ -1,10 +1,11 @@
 import datetime
 import os
+import random
+
 import gensim
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.manifold import TSNE
-import random
 
 from medembed import DIR_PROCESSED
 
