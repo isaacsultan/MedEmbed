@@ -1,8 +1,8 @@
 import argparse
 import os
 
-from .dataset import TxtDataset, XMLDataset
-from .embedding import Embedding
+from dataset import TxtDataset, XMLDataset
+from embedding import Embedding
 
 
 def get_arguments():

@@ -1,6 +1,6 @@
 import os
 
-from .transformer import Transformer
+from transformer import Transformer
 
 try:
     # noinspection PyPep8Naming
@@ -13,7 +13,7 @@ import gensim
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 
-from . import DIR_PROCESSED
+from medembed import DIR_PROCESSED
 
 
 class DataSet:
