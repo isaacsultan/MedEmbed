@@ -1,6 +1,6 @@
 import os
 
-from transformer import Transformer
+from .transformer import Transformer
 
 try:
     # noinspection PyPep8Naming

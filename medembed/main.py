@@ -1,8 +1,8 @@
 import argparse
 import os
 
-from dataset import TxtDataset, XMLDataset
-from embedding import Embedding
+from .dataset import TxtDataset, XMLDataset
+from .embedding import Embedding
 
 
 def get_arguments():
@@ -48,6 +48,4 @@ def main():
     embedding = Embedding(args.verbose)
     embedding.generate(args.model, args.dim, args.workers)
     if args.visualise:
-        embedding.tSNE(model_file='/Users/isaacsultan/Code/MedEmbed/we_models/word2vec_04-27_05:00.bin')
-
-main()
+        embedding.tSNE()

@@ -3,11 +3,14 @@ import os
 import random
 
 import gensim
+import matplotlib as mpl
+
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.manifold import TSNE
 
-from medembed import DIR_PROCESSED
+from . import DIR_PROCESSED
 
 
 class Embedding:
@@ -71,7 +74,7 @@ class Embedding:
 
         if model_file is not None:
             model = gensim.models.KeyedVectors.load(model_file)
-            self.name_model = 'word2vec-04-27_05:00'
+            self.name_model = model_file.replace('.bin', '')
         else:
             model = self.trained_model
 

@@ -12,7 +12,8 @@ and the prevelence of specialist vocabulary.
 
 ## Installation
 
-    git clone https://github.com/isaacsultan/medembed
+    git clone https://github.com/isaacsultan/MedEmbed
+    cd MedEmbed
     pip install -r requirements.txt
 
 
@@ -24,7 +25,7 @@ and the prevelence of specialist vocabulary.
 
 ## Usage
 
-    usage: medembed/main.py
+    usage: main.py
                 [-h] # help
                 [-v] # verbosity
                 [--filetype {txt,xml}] # type of input file
@@ -35,7 +36,7 @@ and the prevelence of specialist vocabulary.
                 [--model {glove,fasttext}] # WE model to generate
                 [--workers WORKERS] # train WE model over n cores
                 ['--visualise] # make tSNE plot of trained word embedding model
-                dir # directory of input files
+                dir # directory of input files (absolute path)
 
 ### Documentation
 

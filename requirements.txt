@@ -1,6 +1,5 @@
-matplotlib==2.2.2
-gensim==3.4.0
-nltk==3.2.5
-seaborn==0.8.1
-Cython==0.27.3
-scikit_learn==0.19.1
+matplotlib
+gensim
+nltk
+seaborn
+scikit_learn
