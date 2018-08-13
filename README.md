@@ -58,5 +58,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Dr. John Kildea: my MDPH-396 supervisor
 * Radiology report annotation using intelligent word embeddings: [Banerjee et al., 2017](https://doi.org/10.1016/j.jbi.2017.11.012)
